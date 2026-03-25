@@ -15,7 +15,8 @@ model User {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   refreshTokens RefreshToken[]
-  analyses      Analysis[]
+  patients      Patient[]
+  exams         Exam[]
 }
 
 model RefreshToken {
@@ -27,14 +28,34 @@ model RefreshToken {
   createdAt DateTime @default(now())
 }
 
-model Analysis {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  fileName  String
-  imagePath String
-  findings  String
-  summary   String
-  disclaimer String  @default("")
-  createdAt DateTime @default(now())
+model Patient {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  birthDate   String?
+  cpf         String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  exams       Exam[]
+}
+
+model Exam {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  patientId   String
+  patient     Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  type        String
+  reason      String?
+  fileName    String
+  imagePath   String
+  status      String    @default("pending")
+  findings    String?
+  summary     String?
+  disclaimer  String?
+  analyzedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
